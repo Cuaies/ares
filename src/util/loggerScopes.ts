@@ -1,1 +1,3 @@
-export enum LoggerScopes {}
+export enum LoggerScopes {
+  ShardingManager = "ShardingManager",
+}
