@@ -1,0 +1,12 @@
+- name: bug
+  color: "FF7F50"
+- name: enhancement
+  color: "293462"
+- name: good first issue
+  color: "7057ff"
+- name: invalid
+  color: "A6AE86"
+- name: question
+  color: "B5DAC2"
+- name: wontfix
+  color: "ffffff"
