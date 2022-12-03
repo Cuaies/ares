@@ -1,6 +1,6 @@
-import { AresBaseCommand } from "./base.interface";
+import { AresBaseCommandInterface } from "./base.interface";
 import { UserApplicationCommandData } from "discord.js";
 
-export interface AresUserCommand
-  extends AresBaseCommand,
+export interface AresUserCommandInterface
+  extends AresBaseCommandInterface,
     UserApplicationCommandData {}

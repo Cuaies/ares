@@ -4,7 +4,7 @@ import {
   MessageContextMenuCommandInteraction,
   UserContextMenuCommandInteraction,
 } from "discord.js";
-export interface AresBaseCommand {
+export interface AresBaseCommandInterface {
   name: string;
   category: CommandCategories;
   disabled: boolean;
