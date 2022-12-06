@@ -28,7 +28,7 @@ export class AresCommandManager {
    * Loads command files.
    * @param directory Path to the commands' directory.
    */
-  public async load(directory: string): Promise<void> {
+  public async loadCommandFiles(directory: string): Promise<void> {
     logger.verbose("[%s] Loading commands", LoggerScopes.CommandsManager);
     const results = new CommandManagerResults();
 
@@ -62,25 +62,35 @@ export class AresCommandManager {
           const command: AresApplicationCommandType = (
             await import(pathToCommand)
           ).default;
+
           logger.debug(LoggerScopes.CommandsManager, {
             iterating: command.name,
             path: pathToCommand,
           });
 
-          if (isAresCommand(command)) {
-            command.disabled
-              ? results.addDisabled(command)
-              : results.addCached(command);
-
-            this._commands.set(command.name, command);
-          } else {
+          if (!isAresCommand(command)) {
             logger.warn(
               "[%s] Argument is not a command: %s",
               LoggerScopes.CommandsManager,
               command
             );
-            results.addUncached(command);
+            return results.addUncached(command);
           }
+
+          if (this._commands.has(command.name)) {
+            logger.warn(
+              "[%s] Duplicated command name: %s",
+              LoggerScopes.CommandsManager,
+              command.name
+            );
+            return results.addUncached(command);
+          }
+
+          command.disabled
+            ? results.addDisabled(command)
+            : results.addCached(command);
+
+          this._commands.set(command.name, command);
         }, Promise.resolve());
       }, Promise.resolve());
     }, Promise.resolve());
