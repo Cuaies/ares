@@ -1,8 +1,11 @@
-import { Collection } from "discord.js";
+import { Collection, REST, Routes } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import { AresClient } from "../../client";
-import { SupportGuild } from "../../ts/interfaces/config.interface";
+import {
+  ClientConfig,
+  SupportGuild,
+} from "../../ts/interfaces/config.interface";
 import {
   AresApplicationCommandType,
   CommandCollection,
@@ -12,7 +15,6 @@ import { LoggerScopes } from "../../util/loggerScopes";
 import logger from "../logger/logger";
 import CommandManagerResults from "./results";
 import config from "config";
-const { guildId }: SupportGuild = config.get("supportGuild");
 
 export class AresCommandManager {
   client?: AresClient;
@@ -31,7 +33,7 @@ export class AresCommandManager {
    * Loads command files.
    * @param directory Path to the commands' directory.
    */
-  public async loadCommandFiles(directory: string): Promise<void> {
+  public async load(directory: string): Promise<void> {
     logger.verbose("[%s] Loading commands", LoggerScopes.CommandsManager);
     const results = new CommandManagerResults();
 
@@ -101,40 +103,41 @@ export class AresCommandManager {
   }
 
   /**
-   * Sends PUT request containing already loaded commands.
+   * Sends a PUT request including commands currently contained in the manager.
    */
-  public async putCommands(): Promise<void> {
-    if (this.client) {
-      if (!this.client?.shard?.ids.includes(0)) return;
-    }
-
+  public async putCommands({
+    token,
+    clientId,
+    guildId,
+  }: ClientConfig & SupportGuild): Promise<void> {
+    const rest = new REST({ version: "10" }).setToken(token);
     const deployment = config.util.getEnv("NODE_ENV") == "production";
-
     logger.info(
       "[%s] Reloading application command(s)",
       LoggerScopes.CommandsManager
     );
-    if (deployment) {
-      await this.client?.application?.commands
-        .set(this._commands.filter((cmd) => !cmd.disabled).toJSON())
-        .catch((e) => logger.error(e));
-    } else {
-      await this.client?.application?.commands
-        .set(this._commands.toJSON(), guildId)
-        .catch((e) => logger.error(e));
+    let data;
+    try {
+      if (deployment) {
+        data = await rest.put(Routes.applicationCommands(clientId), {
+          body: this._commands.filter((cmd) => !cmd.disabled).toJSON(),
+        });
+      } else {
+        data = await rest.put(
+          Routes.applicationGuildCommands(clientId, guildId),
+          {
+            body: this._commands,
+          }
+        );
+      }
+    } catch (e) {
+      logger.error(e);
     }
     logger.info(
-      "[%s] Finished reloading application command(s)",
-      LoggerScopes.CommandsManager
+      "[%s] Finished reloading %s application command(s)",
+      LoggerScopes.CommandsManager,
+      (data as []).length
     );
-  }
-
-  /**
-   * Loads command files & registers them.
-   * @param directory Path to the commands' directory.
-   */
-  public async load(directory: string): Promise<void> {
-    await this.loadCommandFiles(directory);
-    await this.putCommands();
+    logger.debug(LoggerScopes.CommandsManager + ": Request results", data);
   }
 }

@@ -7,6 +7,7 @@
     "test": "jest",
     "build": "tsc -b",
     "dev:start": "nodemon dist/index.js",
+    "register-commands": "npm run build && NODE_CONFIG_DIR=./src/config/ node scripts/register-commands.js",
     "semantic-release": "semantic-release"
   },
   "repository": {
