@@ -24,7 +24,10 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
       LoggerScopes.CommandsManager,
       this._cached
         .concat(this._disabled)
-        .map((command) => `${command.name}-${command.type}`)
+        .map(
+          (command) =>
+            `${command.disabled ? "#" : ""}${command.name}-${command.type}`
+        )
     );
 
     if (!this.success) {
