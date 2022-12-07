@@ -1,4 +1,4 @@
-import { Collection, Events } from "discord.js";
+import { Events } from "discord.js";
 import { AresChatInputCommand } from "../../modules/commands/aresChatInputCommand";
 import { AresMessageCommand } from "../../modules/commands/aresMessageCommand";
 import { AresUserCommand } from "../../modules/commands/aresUserCommand";
