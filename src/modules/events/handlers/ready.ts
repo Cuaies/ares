@@ -1,4 +1,4 @@
-import { AresClient } from "../../../client";
+import { AresClient } from "../../../lib/classes/aresClient";
 import logger from "../../logger/logger";
 import config from "config";
 import AresEventHandler from "../aresEventHandler";
