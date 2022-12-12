@@ -5,7 +5,7 @@ import AresEventHandler from "./aresEventHandler";
 
 export default class EventManagerResults extends BaseResults<AresEventHandler> {
   constructor() {
-    super();
+    super(LoggerScopes.EventsHandler);
   }
 
   displayResults() {
@@ -13,7 +13,7 @@ export default class EventManagerResults extends BaseResults<AresEventHandler> {
 
     logger.info(
       "[%s] Loaded %s handlers [%s currently disabled] [%s]",
-      LoggerScopes.EventsHandler,
+      this._scope,
       this._cached.length + this._disabled.length,
       this._disabled.length,
       result
@@ -22,7 +22,7 @@ export default class EventManagerResults extends BaseResults<AresEventHandler> {
     if (!this.success) {
       logger.error(
         "[%s] Invalid handlers list: %s",
-        LoggerScopes.EventsHandler,
+        this._scope,
         this._uncached.map((event) => event.name)
       );
     }

@@ -5,7 +5,7 @@ import { AresApplicationCommandType } from "../../ts/types/types";
 
 export default class CommandManagerResults extends BaseResults<AresApplicationCommandType> {
   constructor() {
-    super();
+    super(LoggerScopes.CommandsManager);
   }
 
   displayResults(): void {
@@ -13,7 +13,7 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
 
     logger.info(
       "[%s] Loaded %s commands [%s currently disabled] [%s]",
-      LoggerScopes.CommandsManager,
+      this._scope,
       this._cached.length + this._disabled.length,
       this._disabled.length,
       result
@@ -21,7 +21,7 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
 
     logger.info(
       "[%s] Commands list: %s",
-      LoggerScopes.CommandsManager,
+      this._scope,
       this._cached
         .concat(this._disabled)
         .map(
@@ -33,7 +33,7 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
     if (!this.success) {
       logger.error(
         "[%s] Invalid commands list: %s",
-        LoggerScopes.CommandsManager,
+        this._scope,
         this._uncached.map((command) => command.name)
       );
     }
