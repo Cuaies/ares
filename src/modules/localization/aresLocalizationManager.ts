@@ -2,8 +2,11 @@ import { BaseManager, Collection, LocalizationMap } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import { AresClient } from "../../lib/classes/aresClient";
-import { AresLocaleInterface } from "../../ts/interfaces/localization/locale.interface";
-import { LocaleCollection } from "../../ts/types/types";
+import {
+  AresLocale,
+  AresCommandTranslation,
+  LocaleCollection,
+} from "../../ts/types/types";
 import { LoggerScopes } from "../../util/loggerScopes";
 import logger from "../logger/logger";
 import LocalizationManagerResults from "./results";
@@ -35,9 +38,9 @@ export class AresLocalizationManager extends BaseManager {
     await localeFiles.reduce(async (p, file) => {
       await p;
       const pathToLocale = path.join(directory, file);
-      const locale: AresLocaleInterface = (await import(pathToLocale)).default;
+      const locale: AresLocale = (await import(pathToLocale)).default;
 
-      if (AresLocalizationManager.isLocale(locale)) {
+      if (AresLocalizationManager.isAresLocale(locale)) {
         if (this._locales.has(locale.locale)) {
           results.addUncached(locale.locale);
           return results.duplicatedArg(locale.locale);
@@ -61,9 +64,9 @@ export class AresLocalizationManager extends BaseManager {
   }
 
   /**
-   * Type guard for checking if argument is of `AresLocaleInterface`.
+   * Type guard for checking if argument is a locale.
    */
-  static isLocale(locale: unknown): locale is AresLocaleInterface {
+  static isAresLocale(locale: unknown): locale is AresLocale {
     if (!locale || locale.constructor === Array) return false;
     const keys = Object.keys(locale);
     if (keys.includes("locale") && keys.includes("commands")) return true;
