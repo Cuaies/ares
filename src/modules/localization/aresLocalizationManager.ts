@@ -69,4 +69,12 @@ export class AresLocalizationManager extends BaseManager {
     if (keys.includes("locale") && keys.includes("commands")) return true;
     return false;
   }
+
+  /**
+   * Checks if locale is ares' default language, which is `Locale.EnglishUS`.
+   */
+  static isAresBaseLocale(locale: Locale): boolean {
+    if (locale == Locale.EnglishUS) return true;
+    return false;
+  }
 }
