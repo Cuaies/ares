@@ -1,7 +1,6 @@
 import { Collection, REST, Routes } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
-import { AresClient } from "../../client";
 import {
   ClientConfig,
   SupportGuild,
@@ -11,10 +10,11 @@ import {
   CommandCollection,
 } from "../../ts/types/types";
 import { isAresCommand } from "../../util/helpers/stringUtil";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import CommandManagerResults from "./results";
 import config from "config";
+import { AresClient } from "../../lib/classes/aresClient";
 
 export class AresCommandManager {
   client?: AresClient;
@@ -112,6 +112,7 @@ export class AresCommandManager {
   }: ClientConfig & SupportGuild): Promise<void> {
     const rest = new REST({ version: "10" }).setToken(token);
     const deployment = config.util.getEnv("NODE_ENV") == "production";
+    if (!this._commands.size) return;
     logger.info(
       "[%s] Reloading application command(s)",
       LoggerScopes.CommandsManager
@@ -138,6 +139,8 @@ export class AresCommandManager {
       LoggerScopes.CommandsManager,
       (data as []).length
     );
-    logger.debug(LoggerScopes.CommandsManager + ": Request results", data);
+    logger.debug(LoggerScopes.CommandsManager + ": Request results", {
+      data: (data as []).length ? data : "none",
+    });
   }
 }

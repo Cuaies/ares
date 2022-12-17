@@ -1,9 +1,14 @@
+import logger from "../../modules/logger/logger";
+import { LoggerScopes } from "../../modules/logger/loggerScopes";
+
 export abstract class BaseResults<T> {
+  protected _scope: LoggerScopes;
   protected _cached: T[];
   protected _uncached: T[];
   protected _disabled: T[];
 
-  constructor() {
+  constructor(scope: LoggerScopes) {
+    this._scope = scope;
     this._cached = [];
     this._uncached = [];
     this._disabled = [];
@@ -29,4 +34,22 @@ export abstract class BaseResults<T> {
   }
 
   abstract displayResults(): void;
+
+  noFiles(): void {
+    logger.warn("[%s] No valid files found to load", this._scope);
+  }
+
+  duplicatedArg(arg?: unknown): void {
+    logger.warn(
+      "[%s] Argument is duplicated" + `${arg ? `: ${arg}` : ""}`,
+      this._scope
+    );
+  }
+
+  notOfType(arg?: unknown): void {
+    logger.warn(
+      "[%s] Argument is not of valid type" + `${arg ? `: ${arg}` : ""}`,
+      this._scope
+    );
+  }
 }
