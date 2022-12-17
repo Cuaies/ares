@@ -1,4 +1,4 @@
-import { BaseManager, Collection, LocalizationMap } from "discord.js";
+import { BaseManager, Collection, Locale, LocalizationMap } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import { AresClient } from "../../lib/classes/aresClient";
@@ -57,11 +57,61 @@ export class AresLocalizationManager extends BaseManager {
   }
 
   /**
-   * Create a `LocalizationMap` for a command.
+   * Creates and returns a `LocalizationMap` belonging to a specific command.
    */
-  public createLocalizationMap(commandName: string): LocalizationMap {
-    // TODO: implement
+  public createCommandLocalizationMaps(commandName: string): {
+    name_localizations: LocalizationMap | null;
+    description_localizations: LocalizationMap | null;
+  } {
+    let name_localizations = null,
+      description_localizations = null;
+
+    // If the command is not present on any locale, return null.
+    if (!this.locales.some((locale) => locale.commands[commandName]))
+      return { name_localizations, description_localizations };
+
+    name_localizations = this._getCommandKeyValue(commandName, "name");
+    description_localizations = this._getCommandKeyValue(
+      commandName,
+      "description"
+    );
+
+    return { name_localizations, description_localizations };
   }
+
+  /**
+   * Creates and returns a `LocalizationMap` belonging to a specific command's property name.
+   */
+  private _getCommandKeyValue = (
+    commandName: string,
+    key: keyof AresCommandTranslation
+  ): LocalizationMap | null => {
+    const baseValue = this._locales.get(Locale.EnglishUS)?.commands[
+      commandName
+    ][key];
+    if (!baseValue) return null;
+
+    return this._locales.map((locale) => {
+      // If the command is currently being iterated, return it's previous value.
+      if (AresLocalizationManager.isAresBaseLocale(locale.locale))
+        return { [locale.locale]: baseValue };
+
+      // If the command is not present on this locale, return null.
+      const value = locale.commands[commandName][key];
+      if (!value) {
+        logger.warn(
+          "[%s:%s] Command translation line found on base locale, yet it is not present on this one. [key=%s]",
+          LoggerScopes.LocalizationManager,
+          locale.locale,
+          key
+        );
+        return { [locale.locale]: null };
+      }
+
+      // If the command is present on this locale, return its value.
+      return { [locale.locale]: value };
+    }) as LocalizationMap;
+  };
 
   /**
    * Type guard for checking if argument is a locale.
