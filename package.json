@@ -28,6 +28,8 @@
     "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
     "@types/config": "^3.3.0",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
