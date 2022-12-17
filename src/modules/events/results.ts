@@ -1,4 +1,4 @@
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import { BaseResults } from "../../lib/classes/baseResults";
 import logger from "../logger/logger";
 import AresEventHandler from "./aresEventHandler";

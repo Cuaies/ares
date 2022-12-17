@@ -4,7 +4,7 @@ import { AresCommandManager } from "../../modules/commands/aresCommandManager";
 import { AresEventManager } from "../../modules/events/aresEventManager";
 import { AresLocalizationManager } from "../../modules/localization/aresLocalizationManager";
 import logger from "../../modules/logger/logger";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../../modules/logger/loggerScopes";
 
 /** Path to the event handlers' directory. */
 const EVENTS_PATH = path.join(__dirname, "../../", "modules/events/handlers");

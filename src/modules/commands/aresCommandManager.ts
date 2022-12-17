@@ -10,7 +10,7 @@ import {
   CommandCollection,
 } from "../../ts/types/types";
 import { isAresCommand } from "../../util/helpers/stringUtil";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import CommandManagerResults from "./results";
 import config from "config";

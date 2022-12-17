@@ -7,7 +7,7 @@ import {
   AresCommandTranslation,
   LocaleCollection,
 } from "../../ts/types/types";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import LocalizationManagerResults from "./results";
 

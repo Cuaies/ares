@@ -4,7 +4,7 @@ import path from "path";
 import { AresClient } from "../../lib/classes/aresClient";
 import { EventCollection } from "../../ts/types/types";
 import { isEventType } from "../../util/helpers/stringUtil";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import AresEventHandler from "./aresEventHandler";
 import EventManagerResults from "./results";

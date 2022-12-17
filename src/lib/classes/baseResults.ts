@@ -1,5 +1,5 @@
 import logger from "../../modules/logger/logger";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../../modules/logger/loggerScopes";
 
 export abstract class BaseResults<T> {
   protected _scope: LoggerScopes;

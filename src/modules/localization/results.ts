@@ -1,6 +1,6 @@
 import { Locale } from "discord.js";
 import { BaseResults } from "../../lib/classes/baseResults";
-import { LoggerScopes } from "../../util/loggerScopes";
+import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 
 export default class LocalizationManagerResults extends BaseResults<Locale> {
