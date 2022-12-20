@@ -70,8 +70,8 @@ export class AresLocalizationManager extends BaseManager {
     if (!this.locales.some((locale) => locale.commands[commandName]))
       return { name_localizations, description_localizations };
 
-    name_localizations = this._getCommandKeyValue(commandName, "name");
-    description_localizations = this._getCommandKeyValue(
+    name_localizations = this._getCommandLocaleMap(commandName, "name");
+    description_localizations = this._getCommandLocaleMap(
       commandName,
       "description"
     );
@@ -82,7 +82,7 @@ export class AresLocalizationManager extends BaseManager {
   /**
    * Creates and returns a `LocalizationMap` belonging to a specific command's property name.
    */
-  private _getCommandKeyValue = (
+  private _getCommandLocaleMap = (
     commandName: string,
     key: keyof AresCommandTranslation
   ): LocalizationMap | null => {
