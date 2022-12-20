@@ -109,10 +109,6 @@ export class AresLocalizationManager extends BaseManager {
     let name_localizations = null,
       description_localizations = null;
 
-    // If the command is not present on any locale, return null.
-    if (!this.locales.some((locale) => locale.commands[commandName]))
-      return { name_localizations, description_localizations };
-
     name_localizations = this._getCommandLocaleMap(commandName, "name");
     description_localizations = this._getCommandLocaleMap(
       commandName,
