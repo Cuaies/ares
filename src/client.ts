@@ -10,5 +10,5 @@ const client = new AresClient({
 });
 
 (async () => {
-  await client.init(token).catch((e) => logger.error(new Error(e)));
+  await client.init(token).catch((e) => logger.error(e));
 })();
