@@ -1,51 +1,46 @@
 import { ApplicationCommandType } from "discord.js";
-import { AresChatInputCommand } from "../../modules/commands/aresChatInputCommand";
+import {
+  AresChatInputCommand,
+  AresChatInputCommandBuilder,
+} from "../../modules/commands/aresChatInputCommand";
+import { AresContextMenuCommandBuilder } from "../../modules/commands/aresContextMenuCommand";
 import { AresMessageCommand } from "../../modules/commands/aresMessageCommand";
 import { AresUserCommand } from "../../modules/commands/aresUserCommand";
-import { CommandCategories } from "../../util/commandCategories";
 
 describe("Commands", () => {
   describe("AresChatInputCommand", () => {
     const command = new AresChatInputCommand(
-      "test",
-      "test",
-      CommandCategories.General,
-
-      false,
+      new AresChatInputCommandBuilder().setName("test").setDescription("test"),
       async (i) => {
-        i;
+        return;
       }
     );
     test("it should be of the according type", () => {
-      expect(command.type).toBe(ApplicationCommandType.ChatInput);
+      expect(command.data.type).toBe(ApplicationCommandType.ChatInput);
     });
   });
 
   describe("AresMessageCommand", () => {
     const command = new AresMessageCommand(
-      "test",
-      CommandCategories.General,
-      false,
+      new AresContextMenuCommandBuilder().setName("test"),
       async (i) => {
-        i;
+        return;
       }
     );
     test("it should be of the according type", () => {
-      expect(command.type).toBe(ApplicationCommandType.Message);
+      expect(command.data.type).toBe(ApplicationCommandType.Message);
     });
   });
 
   describe("AresUserCommand", () => {
     const command = new AresUserCommand(
-      "test",
-      CommandCategories.General,
-      false,
+      new AresContextMenuCommandBuilder().setName("test"),
       async (i) => {
-        i;
+        return;
       }
     );
     test("it should be of the according type", () => {
-      expect(command.type).toBe(ApplicationCommandType.User);
+      expect(command.data.type).toBe(ApplicationCommandType.User);
     });
   });
 });

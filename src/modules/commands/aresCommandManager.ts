@@ -69,7 +69,7 @@ export class AresCommandManager {
           ).default;
 
           logger.debug(LoggerScopes.CommandsManager, {
-            iterating: command.name,
+            iterating: command.data.name,
             path: pathToCommand,
           });
 
@@ -82,20 +82,20 @@ export class AresCommandManager {
             return results.addUncached(command);
           }
 
-          if (this._commands.has(command.name)) {
+          if (this._commands.has(command.data.name)) {
             logger.warn(
               "[%s] Duplicated command name: %s",
               LoggerScopes.CommandsManager,
-              command.name
+              command.data.name
             );
             return results.addUncached(command);
           }
 
-          command.disabled
+          command.data.disabled
             ? results.addDisabled(command)
             : results.addCached(command);
 
-          this._commands.set(command.name, command);
+          this._commands.set(command.data.name, command);
         }, Promise.resolve());
       }, Promise.resolve());
     }, Promise.resolve());
@@ -121,7 +121,7 @@ export class AresCommandManager {
     try {
       if (deployment) {
         data = await rest.put(Routes.applicationCommands(clientId), {
-          body: this._commands.filter((cmd) => !cmd.disabled).toJSON(),
+          body: this._commands.filter((cmd) => !cmd.data.disabled).toJSON(),
         });
       } else {
         data = await rest.put(
