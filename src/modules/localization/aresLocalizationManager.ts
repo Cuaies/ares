@@ -1,4 +1,10 @@
-import { BaseManager, Collection, Locale, LocalizationMap } from "discord.js";
+import {
+  ApplicationCommandType,
+  BaseManager,
+  Collection,
+  Locale,
+  LocalizationMap,
+} from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import { AresClient } from "../../lib/classes/aresClient";
@@ -10,6 +16,7 @@ import {
 import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import LocalizationManagerResults from "./results";
+import AresLocalizationManagerError from "../../lib/classes/errors/shardingManagerError";
 
 export class AresLocalizationManager extends BaseManager {
   private _locales: LocaleCollection;
@@ -61,6 +68,35 @@ export class AresLocalizationManager extends BaseManager {
       }
     }, Promise.resolve());
     results.displayResults();
+  }
+
+  /**
+   * Returns the command's default locale.
+   */
+  public getCommandDefaultLocale(
+    commandFileName: string,
+    commandType: ApplicationCommandType
+  ): AresCommandTranslation {
+    const commandLocale = this.defaultLocale?.commands[commandFileName];
+
+    // If the command is not present on the default locale, throw an error.
+    if (!commandLocale) {
+      throw new AresLocalizationManagerError(
+        `Command missing default locale: ${commandFileName}`
+      );
+    }
+
+    // If the command is a chat input and it's description is missing, throw an error.
+    if (
+      !commandLocale.description &&
+      commandType === ApplicationCommandType.ChatInput
+    ) {
+      throw new AresLocalizationManagerError(
+        `Chat input command's description missing default locale: ${commandFileName}`
+      );
+    }
+
+    return commandLocale;
   }
 
   /**
