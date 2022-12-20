@@ -14,10 +14,5 @@ export class AresUserCommand extends AresContextMenuCommand {
   ) {
     super(data, execute);
     this.data.setType(ApplicationCommandType.User);
-    this._validate();
-  }
-
-  private _validate() {
-    return this.data.toJSON();
   }
 }

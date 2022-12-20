@@ -28,11 +28,6 @@ export class AresChatInputCommand {
     execute: (interaction: CommandInteraction) => Promise<void>
   ) {
     this.data = data;
-    this._validate();
     this.execute = execute;
-  }
-
-  private _validate() {
-    return this.data.toJSON();
   }
 }
