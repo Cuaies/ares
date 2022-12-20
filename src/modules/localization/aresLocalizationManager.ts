@@ -122,34 +122,33 @@ export class AresLocalizationManager extends BaseManager {
    * Creates and returns a `LocalizationMap` belonging to a specific command's property name.
    */
   private _getCommandLocaleMap = (
-    commandName: string,
+    commandFileName: string,
     key: keyof AresCommandTranslation
   ): LocalizationMap | null => {
-    const baseValue = this._locales.get(Locale.EnglishUS)?.commands[
-      commandName
-    ][key];
-    if (!baseValue) return null;
+    const map = {};
 
-    return this._locales.map((locale) => {
-      // If the command is currently being iterated, return it's previous value.
-      if (AresLocalizationManager.isAresBaseLocale(locale.locale))
-        return { [locale.locale]: baseValue };
+    this._locales.map((locale) => {
+      // If the default locale is being iterated, skip it.
+      if (AresLocalizationManager.isAresBaseLocale(locale.locale)) return;
 
       // If the command is not present on this locale, return null.
-      const value = locale.commands[commandName][key];
+      const value = locale.commands[commandFileName][key];
       if (!value) {
         logger.warn(
-          "[%s:%s] Command translation line found on base locale, yet it is not present on this one. [key=%s]",
+          "[%s:%s] Command translation missing on locale: %s [key=%s]",
           LoggerScopes.LocalizationManager,
           locale.locale,
+          commandFileName,
           key
         );
-        return { [locale.locale]: null };
+        return Object.assign(map, { [locale.locale]: null });
       }
 
       // If the command is present on this locale, return its value.
-      return { [locale.locale]: value };
-    }) as LocalizationMap;
+      return Object.assign(map, { [locale.locale]: value });
+    });
+
+    return map;
   };
 
   /**
