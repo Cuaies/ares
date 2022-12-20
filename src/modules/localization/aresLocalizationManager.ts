@@ -25,6 +25,13 @@ export class AresLocalizationManager extends BaseManager {
   }
 
   /**
+   * Returns the locale object of the default locale.
+   */
+  get defaultLocale() {
+    return this._locales.get(Locale.EnglishUS);
+  }
+
+  /**
    * Loads directory's locale files.
    * @param directory Path to the locales' directory.
    */
