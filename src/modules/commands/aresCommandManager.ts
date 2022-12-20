@@ -1,4 +1,4 @@
-import { Collection, REST, Routes } from "discord.js";
+import { ApplicationCommandType, Collection, REST, Routes } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import {
@@ -64,7 +64,7 @@ export class AresCommandManager {
         await commandFiles.reduce(async (p3, file) => {
           await p3;
           const pathToCommand = path.join(commandFilesPath, file);
-          const command: AresApplicationCommandType = (
+          let command: AresApplicationCommandType = (
             await import(pathToCommand)
           ).default;
 
@@ -90,6 +90,10 @@ export class AresCommandManager {
             );
             return results.addUncached(command);
           }
+
+          // Sets the command's locale data.
+          command =
+            this._setCommandLocale(command, file.replace(".js", "")) || command;
 
           command.data.disabled
             ? results.addDisabled(command)
@@ -142,5 +146,42 @@ export class AresCommandManager {
     logger.debug(LoggerScopes.CommandsManager + ": Request results", {
       data: (data as []).length ? data : "none",
     });
+  }
+
+  /**
+   * Gathers locale data for the specific command file name and sets it to the command.
+   */
+  private _setCommandLocale(
+    command: AresApplicationCommandType,
+    commandFileName: string
+  ): AresApplicationCommandType | undefined {
+    if (!this.client?.localizationManager) return undefined;
+
+    const defaultLocales =
+      this.client.localizationManager.getCommandDefaultLocale(
+        commandFileName,
+        command.data.type
+      );
+
+    const maps =
+      this.client.localizationManager.createCommandLocalizationMaps(
+        commandFileName
+      );
+
+    // Sets the default locale and localizations.
+    command.data
+      .setName(defaultLocales.name)
+      .setDescriptionLocalizations(maps.description_localizations)
+      .setNameLocalizations(maps.name_localizations);
+
+    // Sets the description if it's a chat input command.
+    if (
+      defaultLocales.description &&
+      command.data.type === ApplicationCommandType.ChatInput
+    ) {
+      command.data.setDescription(defaultLocales.description);
+    }
+
+    return command;
   }
 }
