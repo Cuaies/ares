@@ -8,7 +8,7 @@
     [
       "@semantic-release/github",
       {
-        "successComment": ":tada: This ${issue.pull_request ? 'pull request' : 'issue'} is included in version ${nextRelease.version} :tada:\n\nThe release is available on [GitHub release](${releases.filter(release => /github\\.com/i.test(release.url))[0].url}).",
+        "successComment": ":tada: This ${issue.pull_request ? 'pull request has been included in' : 'issue has been resolved in'} version ${nextRelease.version} :tada:\n\nThe release is available on [GitHub Releases](${releases.filter(release => /github\\.com/i.test(release.url))[0].url}).",
         "assignees": [
           "Cuaies"
         ]
