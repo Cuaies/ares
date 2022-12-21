@@ -35,7 +35,7 @@ const logger = createLogger({
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new transports.Console({
-      level: "silly",
+      level: process.env.DEBUG == "true" ? "silly" : "info",
       handleExceptions: true,
       format: format.combine(
         format.colorize({ all: true }),

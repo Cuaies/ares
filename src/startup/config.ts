@@ -7,7 +7,9 @@ export const PLACEHOLDERS = [
   "SNOWFLAKE",
   "URL",
   "CONNECTION",
+  "BOOLEAN",
   "# EDIT THIS",
+  "# EDITABLE",
 ];
 
 /**
