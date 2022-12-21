@@ -33,28 +33,33 @@ const COMMANDS_PATH = path.join(
   await client.localizationManager.load(LOCALES_PATH);
   await client.commandManager.load(COMMANDS_PATH);
 
-  let data;
+  let res,
+    success = true;
 
   try {
-    logger.info("Reloading application command(s)");
+    logger.info("Reloading application command(s) [production=%s]", deployment);
     // If the deployment is set to true, the deploy of the commands will be done to the global scope.
     if (deployment) {
-      data = await rest.put(Routes.applicationCommands(clientId), {
+      res = await rest.put(Routes.applicationCommands(clientId), {
         body: client.commandManager.commands
           .filter((cmd) => !cmd.disabled)
           .map((cmd) => cmd.data.toJSON()),
       });
       // Otherwise, the deploy of the commands will be done to the support guild.
     } else {
-      data = await rest.put(
-        Routes.applicationGuildCommands(clientId, guildId),
-        {
-          body: client.commandManager.commands.map((cmd) => cmd.data.toJSON()),
-        }
-      );
+      res = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+        body: client.commandManager.commands.map((cmd) => cmd.data.toJSON()),
+      });
     }
-    logger.info("Finished reloading %s application command(s)", data.length);
   } catch (e) {
+    success = false;
     logger.error(e);
+  } finally {
+    // Log the result of the deployment.
+    logger.info(
+      "Finished reloading %s application command(s) [%s]",
+      res.length,
+      success ? "ok" : "non-ok"
+    );
   }
 })();
