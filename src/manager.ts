@@ -3,7 +3,7 @@ import path from "path";
 import config from "config";
 import logger from "./modules/logger/logger";
 import { ClientConfig } from "./ts/interfaces/config.interface";
-import { LoggerScopes } from "./util/loggerScopes";
+import { LoggerScopes } from "./modules/logger/loggerScopes";
 const { token }: ClientConfig = config.get("clientConfig");
 
 const manager = new ShardingManager(path.join(__dirname, "./client.js"), {
