@@ -132,7 +132,7 @@ export class AresLocalizationManager extends BaseManager {
       if (AresLocalizationManager.isAresBaseLocale(locale.locale)) return;
 
       // If the command is not present on this locale, return null.
-      const value = locale.commands[commandFileName][key];
+      const value = locale.commands[commandFileName]?.[key];
       if (!value) {
         logger.warn(
           "[%s:%s] Command translation missing on locale: %s [key=%s]",
