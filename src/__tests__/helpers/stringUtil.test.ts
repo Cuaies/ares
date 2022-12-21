@@ -1,8 +1,11 @@
 import { Events } from "discord.js";
-import { AresChatInputCommand } from "../../modules/commands/aresChatInputCommand";
+import {
+  AresChatInputCommand,
+  AresChatInputCommandBuilder,
+} from "../../modules/commands/aresChatInputCommand";
+import { AresContextMenuCommandBuilder } from "../../modules/commands/aresContextMenuCommand";
 import { AresMessageCommand } from "../../modules/commands/aresMessageCommand";
 import { AresUserCommand } from "../../modules/commands/aresUserCommand";
-import { CommandCategories } from "../../util/commandCategories";
 import { isAresCommand, isEventType } from "../../util/helpers/stringUtil";
 
 describe("isEventType", () => {
@@ -28,28 +31,23 @@ describe("isAresCommand", () => {
   test("it should return true on valid arguments", () => {
     const DATA_SET = [
       new AresChatInputCommand(
-        "test",
-        "test",
-        CommandCategories.General,
-        false,
+        new AresChatInputCommandBuilder()
+          .setName("test")
+          .setDescription("test"),
         async (i) => {
-          i;
+          return;
         }
       ),
       new AresUserCommand(
-        "test",
-        CommandCategories.General,
-        false,
+        new AresContextMenuCommandBuilder().setName("test"),
         async (i) => {
-          i;
+          return;
         }
       ),
       new AresMessageCommand(
-        "test",
-        CommandCategories.General,
-        false,
+        new AresContextMenuCommandBuilder().setName("test"),
         async (i) => {
-          i;
+          return;
         }
       ),
     ];

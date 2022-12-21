@@ -1,21 +1,18 @@
-import { ApplicationCommandType, CommandInteraction } from "discord.js";
-import { AresUserCommandInterface } from "../../ts/interfaces/commands/user.interface";
-import { CommandCategories } from "../../util/commandCategories";
-import { AresBaseCommand } from "./aresBaseCommand";
+import {
+  ApplicationCommandType,
+  ContextMenuCommandInteraction,
+} from "discord.js";
+import {
+  AresContextMenuCommand,
+  AresContextMenuCommandBuilder,
+} from "./aresContextMenuCommand";
 
-export class AresUserCommand
-  extends AresBaseCommand
-  implements AresUserCommandInterface
-{
-  type: ApplicationCommandType.User;
-
+export class AresUserCommand extends AresContextMenuCommand {
   constructor(
-    name: string,
-    category: CommandCategories,
-    isDisabled: boolean,
-    execute: (interaction: CommandInteraction) => Promise<void>
+    data: AresContextMenuCommandBuilder,
+    execute: (interaction: ContextMenuCommandInteraction) => Promise<void>
   ) {
-    super(name, category, isDisabled, execute);
-    this.type = ApplicationCommandType.User;
+    super(data, execute);
+    this.data.setType(ApplicationCommandType.User);
   }
 }

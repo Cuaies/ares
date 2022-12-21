@@ -1,4 +1,10 @@
-import { BaseManager, Collection, Locale, LocalizationMap } from "discord.js";
+import {
+  ApplicationCommandType,
+  BaseManager,
+  Collection,
+  Locale,
+  LocalizationMap,
+} from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import { AresClient } from "../../lib/classes/aresClient";
@@ -10,6 +16,7 @@ import {
 import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import LocalizationManagerResults from "./results";
+import AresLocalizationManagerError from "../../lib/classes/errors/shardingManagerError";
 
 export class AresLocalizationManager extends BaseManager {
   private _locales: LocaleCollection;
@@ -22,6 +29,13 @@ export class AresLocalizationManager extends BaseManager {
 
   get locales() {
     return this._locales;
+  }
+
+  /**
+   * Returns the locale object of the default locale.
+   */
+  get defaultLocale() {
+    return this._locales.get(Locale.EnglishUS);
   }
 
   /**
@@ -57,6 +71,35 @@ export class AresLocalizationManager extends BaseManager {
   }
 
   /**
+   * Returns the command's default locale.
+   */
+  public getCommandDefaultLocale(
+    commandFileName: string,
+    commandType: ApplicationCommandType
+  ): AresCommandTranslation {
+    const commandLocale = this.defaultLocale?.commands[commandFileName];
+
+    // If the command is not present on the default locale, throw an error.
+    if (!commandLocale) {
+      throw new AresLocalizationManagerError(
+        `Command missing default locale: ${commandFileName}`
+      );
+    }
+
+    // If the command is a chat input and it's description is missing, throw an error.
+    if (
+      !commandLocale.description &&
+      commandType === ApplicationCommandType.ChatInput
+    ) {
+      throw new AresLocalizationManagerError(
+        `Chat input command's description missing default locale: ${commandFileName}`
+      );
+    }
+
+    return commandLocale;
+  }
+
+  /**
    * Creates and returns a `LocalizationMap` belonging to a specific command.
    */
   public createCommandLocalizationMaps(commandName: string): {
@@ -66,12 +109,8 @@ export class AresLocalizationManager extends BaseManager {
     let name_localizations = null,
       description_localizations = null;
 
-    // If the command is not present on any locale, return null.
-    if (!this.locales.some((locale) => locale.commands[commandName]))
-      return { name_localizations, description_localizations };
-
-    name_localizations = this._getCommandKeyValue(commandName, "name");
-    description_localizations = this._getCommandKeyValue(
+    name_localizations = this._getCommandLocaleMap(commandName, "name");
+    description_localizations = this._getCommandLocaleMap(
       commandName,
       "description"
     );
@@ -82,35 +121,34 @@ export class AresLocalizationManager extends BaseManager {
   /**
    * Creates and returns a `LocalizationMap` belonging to a specific command's property name.
    */
-  private _getCommandKeyValue = (
-    commandName: string,
+  private _getCommandLocaleMap = (
+    commandFileName: string,
     key: keyof AresCommandTranslation
   ): LocalizationMap | null => {
-    const baseValue = this._locales.get(Locale.EnglishUS)?.commands[
-      commandName
-    ][key];
-    if (!baseValue) return null;
+    const map = {};
 
-    return this._locales.map((locale) => {
-      // If the command is currently being iterated, return it's previous value.
-      if (AresLocalizationManager.isAresBaseLocale(locale.locale))
-        return { [locale.locale]: baseValue };
+    this._locales.map((locale) => {
+      // If the default locale is being iterated, skip it.
+      if (AresLocalizationManager.isAresBaseLocale(locale.locale)) return;
 
       // If the command is not present on this locale, return null.
-      const value = locale.commands[commandName][key];
+      const value = locale.commands[commandFileName]?.[key];
       if (!value) {
         logger.warn(
-          "[%s:%s] Command translation line found on base locale, yet it is not present on this one. [key=%s]",
+          "[%s:%s] Command translation missing on locale: %s [key=%s]",
           LoggerScopes.LocalizationManager,
           locale.locale,
+          commandFileName,
           key
         );
-        return { [locale.locale]: null };
+        return Object.assign(map, { [locale.locale]: null });
       }
 
       // If the command is present on this locale, return its value.
-      return { [locale.locale]: value };
-    }) as LocalizationMap;
+      return Object.assign(map, { [locale.locale]: value });
+    });
+
+    return map;
   };
 
   /**

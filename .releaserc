@@ -1,0 +1,18 @@
+{
+  "branches": [
+    "master"
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/github",
+      {
+        "successComment": ":tada: This ${issue.pull_request ? 'pull request has been included in' : 'issue has been resolved in'} version ${nextRelease.version} :tada:\n\nThe release is available on [GitHub Releases](${releases.filter(release => /github\\.com/i.test(release.url))[0].url}).",
+        "assignees": [
+          "Cuaies"
+        ]
+      }
+    ]
+  ]
+}

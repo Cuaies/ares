@@ -26,7 +26,9 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
         .concat(this._disabled)
         .map(
           (command) =>
-            `${command.disabled ? "#" : ""}${command.name}-${command.type}`
+            `${command.data.disabled ? "#" : ""}${command.data.name}-${
+              command.data.type
+            }`
         )
     );
 
@@ -34,7 +36,7 @@ export default class CommandManagerResults extends BaseResults<AresApplicationCo
       logger.error(
         "[%s] Invalid commands list: %s",
         this._scope,
-        this._uncached.map((command) => command.name)
+        this._uncached.map((command) => command.data.name)
       );
     }
   }

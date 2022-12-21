@@ -1,19 +1,16 @@
 import {
-  ApplicationCommandType,
-  CommandInteraction,
-  SlashCommandBuilder,
+  ContextMenuCommandBuilder,
+  ContextMenuCommandInteraction,
 } from "discord.js";
 import { Mixin } from "ts-mixer";
 import { AresBaseCommand } from "./aresBaseCommand";
 
-export class AresChatInputCommandBuilder extends Mixin(
+export class AresContextMenuCommandBuilder extends Mixin(
   AresBaseCommand,
-  SlashCommandBuilder
-) {
-  readonly type = ApplicationCommandType.ChatInput;
-}
+  ContextMenuCommandBuilder
+) {}
 
-export class AresChatInputCommand {
+export class AresContextMenuCommand {
   /**
    * Command's data.
    */
@@ -23,9 +20,9 @@ export class AresChatInputCommand {
    */
   readonly execute;
 
-  constructor(
-    data: AresChatInputCommandBuilder,
-    execute: (interaction: CommandInteraction) => Promise<void>
+  protected constructor(
+    data: AresContextMenuCommandBuilder,
+    execute: (interaction: ContextMenuCommandInteraction) => Promise<void>
   ) {
     this.data = data;
     this.execute = execute;
