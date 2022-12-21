@@ -14,10 +14,5 @@ export class AresMessageCommand extends AresContextMenuCommand {
   ) {
     super(data, execute);
     this.data.setType(ApplicationCommandType.Message);
-    this._validate();
-  }
-
-  private _validate() {
-    return this.data.toJSON();
   }
 }
