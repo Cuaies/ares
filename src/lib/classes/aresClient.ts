@@ -14,12 +14,6 @@ const COMMANDS_PATH = path.join(
   "../../",
   "modules/commands/commands"
 );
-/** Path to the commands' directory. */
-const LOCALES_PATH = path.join(
-  __dirname,
-  "../../",
-  "modules/localization/locales"
-);
 
 export class AresClient extends Client {
   public eventManager;
@@ -34,12 +28,8 @@ export class AresClient extends Client {
     this.commandManager = new AresCommandManager(this);
   }
 
-  async loadManagers(
-    localesPath = LOCALES_PATH,
-    commandsPath = COMMANDS_PATH,
-    eventsPath = EVENTS_PATH
-  ) {
-    await this.localizationManager.load(localesPath);
+  async loadManagers(commandsPath = COMMANDS_PATH, eventsPath = EVENTS_PATH) {
+    await this.localizationManager.init();
     await this.commandManager.load(commandsPath);
     this.eventManager.loadAll(eventsPath);
   }
