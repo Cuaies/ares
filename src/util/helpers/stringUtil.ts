@@ -17,10 +17,3 @@ export const isAresCommand = (
   if (command instanceof AresUserCommand) return true;
   return false;
 };
-
-/**
- * Checks if the current environment is production.
- */
-export const isProductionEnvironment = (): boolean => {
-  return process.env.NODE_ENV === "production";
-};

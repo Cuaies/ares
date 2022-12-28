@@ -2,7 +2,8 @@ import { InitOptions } from "i18next";
 import path from "path";
 import { FsBackendOptions } from "i18next-fs-backend";
 import { Locale } from "discord.js";
-import { isProductionEnvironment } from "../../util/helpers/stringUtil";
+import { readdir } from "fs/promises";
+import { isProductionEnvironment } from "../../util/helpers/configUtil";
 
 /**
  * Path to the locales' directory.
