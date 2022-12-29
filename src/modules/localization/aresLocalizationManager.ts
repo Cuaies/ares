@@ -2,7 +2,7 @@ import { BaseManager } from "discord.js";
 import { AresClient } from "../../lib/classes/aresClient";
 import i18next from "i18next";
 import I18NexFsBackend from "i18next-fs-backend";
-import { options } from "./i18next.config";
+import { createProviderOptions } from "./i18next.config";
 import AresLocalizationManagerError from "../../lib/classes/errors/shardingManagerError";
 
 export class AresLocalizationManager extends BaseManager {
@@ -24,7 +24,8 @@ export class AresLocalizationManager extends BaseManager {
    * Initializes the manager.
    */
   public async init() {
-    await i18next.use(I18NexFsBackend).init(options);
+    await i18next.use(I18NexFsBackend).init(await createProviderOptions());
+    if (i18next.isInitialized) this._isProviderReady = true;
     this._provider = i18next;
   }
 
