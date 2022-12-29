@@ -3,7 +3,7 @@ import path from "path";
 import { FsBackendOptions } from "i18next-fs-backend";
 import { Locale } from "discord.js";
 import { readdir } from "fs/promises";
-import { isAresLocale } from "../../util/helpers/stringUtil";
+import { isLocale } from "../../util/helpers/stringUtil";
 
 /**
  * Options for initializing i18next with the i18next-fs-backend.
@@ -63,8 +63,6 @@ async function getAvailableLocales(pathToLocales: string) {
   });
 
   return direns
-    .filter(
-      (dirent) => dirent.isDirectory() && isAresLocale(dirent.name as Locale)
-    )
+    .filter((dirent) => dirent.isDirectory() && isLocale(dirent.name as Locale))
     .map((dir) => dir.name);
 }
