@@ -1,4 +1,4 @@
-import { Events } from "discord.js";
+import { Events, Locale } from "discord.js";
 import {
   AresChatInputCommand,
   AresChatInputCommandBuilder,
@@ -6,7 +6,11 @@ import {
 import { AresContextMenuCommandBuilder } from "../../modules/commands/aresContextMenuCommand";
 import { AresMessageCommand } from "../../modules/commands/aresMessageCommand";
 import { AresUserCommand } from "../../modules/commands/aresUserCommand";
-import { isAresCommand, isEventType } from "../../util/helpers/stringUtil";
+import {
+  isAresCommand,
+  isEventType,
+  isLocale,
+} from "../../util/helpers/stringUtil";
 
 describe("isEventType", () => {
   test("it should return false on invalid arguments", () => {
@@ -53,6 +57,22 @@ describe("isAresCommand", () => {
     ];
     DATA_SET.forEach((value) => {
       expect(isAresCommand(value)).toBe(true);
+    });
+  });
+});
+
+describe("isLocale", () => {
+  test("it should return false on invalid arguments", () => {
+    const DATA_SET = ["test", "", {}, [], 0];
+    DATA_SET.forEach((value) => {
+      expect(isLocale(value)).toBe(false);
+    });
+  });
+
+  test("it should return true on valid arguments", () => {
+    const DATA_SET = [Locale.EnglishUS, Locale.Bulgarian];
+    DATA_SET.forEach((value) => {
+      expect(isLocale(value)).toBe(true);
     });
   });
 });
