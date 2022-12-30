@@ -46,7 +46,6 @@ export const createProviderOptions = async (): Promise<
     ns: ["commands"],
     preload: languages,
     supportedLngs: languages,
-    fallbackLng: lng,
     lng: lng,
     load: "currentOnly",
     saveMissing: true,
