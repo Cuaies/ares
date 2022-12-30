@@ -1,9 +1,14 @@
-import { BaseManager } from "discord.js";
+import { BaseManager, LocalizationMap } from "discord.js";
 import { AresClient } from "../../lib/classes/aresClient";
 import i18next from "i18next";
 import I18NexFsBackend from "i18next-fs-backend";
-import { createProviderOptions } from "./i18next.config";
+import { createProviderOptions, DEFAULT_LOCALE } from "./i18next.config";
 import AresLocalizationManagerError from "../../lib/classes/errors/shardingManagerError";
+import logger from "../logger/logger";
+import { LoggerScopes } from "../logger/loggerScopes";
+import { isAresCommandLocale } from "../../util/helpers/typeUtil";
+import { LocaleNamespaces } from "./localizationNamespaces";
+import { AresCommandTranslation } from "../../ts/types/types";
 
 export class AresLocalizationManager extends BaseManager {
   /**
@@ -47,5 +52,69 @@ export class AresLocalizationManager extends BaseManager {
       return this._isProviderReady;
     }
     throw new AresLocalizationManagerError("Provider is not yet initialized");
+  }
+
+  /**
+   * Creates localization maps for the supplied command name.
+   */
+  public createCommandLocalizationMaps(commandName: string): {
+    default_localization: AresCommandTranslation;
+    name_localizations: LocalizationMap;
+    description_localizations: LocalizationMap;
+  } {
+    const { provider } = this,
+      name_localizations: LocalizationMap = {},
+      description_localizations: LocalizationMap = {},
+      default_localization = {} as AresCommandTranslation;
+
+    if (
+      this.provider.options.preload &&
+      Array.isArray(this.provider.options.preload)
+    ) {
+      this.provider.options.preload.forEach((locale) => {
+        if (provider.exists(commandName, { lng: locale, ns: "commands" })) {
+          const t = provider.t(commandName, {
+            lng: locale,
+            ns: LocaleNamespaces.Commands,
+            returnObjects: true,
+          });
+
+          if (isAresCommandLocale(t)) {
+            if (locale == DEFAULT_LOCALE) {
+              return Object.assign(default_localization, t);
+            }
+
+            Object.assign(name_localizations, { [locale]: t.name });
+            Object.assign(description_localizations, {
+              [locale]: t.description || null,
+            });
+          } else {
+            logger.warn(
+              `[${LoggerScopes.LocalizationManager}] Invalid command localization argument for command. [command=${commandName}] [locale=${locale}]`
+            );
+          }
+        } else {
+          logger.warn(
+            `[${LoggerScopes.LocalizationManager}] Missing command localization for command. [command=${commandName}] [locale=${locale}]`
+          );
+        }
+      });
+    } else {
+      throw new AresLocalizationManagerError(
+        "Provider requires preloaded locales in order to create command localization maps."
+      );
+    }
+
+    if (!default_localization.name) {
+      throw new AresLocalizationManagerError(
+        `Missing default command localization for command. [command=${commandName}]`
+      );
+    }
+
+    return {
+      default_localization,
+      name_localizations,
+      description_localizations,
+    };
   }
 }
