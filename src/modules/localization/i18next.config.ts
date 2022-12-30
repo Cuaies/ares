@@ -6,6 +6,11 @@ import { readdir } from "fs/promises";
 import { isLocale } from "../../util/helpers/stringUtil";
 
 /**
+ * The default locale to be used.
+ */
+export const DEFAULT_LOCALE = Locale.EnglishUS;
+
+/**
  * Options for initializing i18next with the i18next-fs-backend.
  */
 export const createProviderOptions = async (): Promise<
@@ -39,7 +44,7 @@ export const createProviderOptions = async (): Promise<
   /**
    * The default language to use based on `NODE_ENV`'s value.
    */
-  const lng = Locale.EnglishUS;
+  const lng = DEFAULT_LOCALE;
 
   return {
     debug: process.env.DEBUG === "true" ? true : false,
