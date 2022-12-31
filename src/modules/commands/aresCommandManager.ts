@@ -1,10 +1,6 @@
-import { ApplicationCommandType, Collection, REST, Routes } from "discord.js";
+import { ApplicationCommandType, Collection } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
-import {
-  ClientConfig,
-  SupportGuild,
-} from "../../ts/interfaces/config.interface";
 import {
   AresApplicationCommandType,
   CommandCollection,
@@ -13,7 +9,6 @@ import { isAresCommand } from "../../util/helpers/stringUtil";
 import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import CommandManagerResults from "./results";
-import config from "config";
 import { AresClient } from "../../lib/classes/aresClient";
 
 export class AresCommandManager {
@@ -103,48 +98,6 @@ export class AresCommandManager {
       }, Promise.resolve());
     }, Promise.resolve());
     results.displayResults();
-  }
-
-  /**
-   * Sends a PUT request including commands currently contained in the manager.
-   */
-  public async putCommands({
-    token,
-    clientId,
-    guildId,
-  }: ClientConfig & SupportGuild): Promise<void> {
-    const rest = new REST({ version: "10" }).setToken(token);
-    const deployment = config.util.getEnv("NODE_ENV") == "production";
-    if (!this._commands.size) return;
-    logger.info(
-      "[%s] Reloading application command(s)",
-      LoggerScopes.CommandsManager
-    );
-    let data;
-    try {
-      if (deployment) {
-        data = await rest.put(Routes.applicationCommands(clientId), {
-          body: this._commands.filter((cmd) => !cmd.data.disabled).toJSON(),
-        });
-      } else {
-        data = await rest.put(
-          Routes.applicationGuildCommands(clientId, guildId),
-          {
-            body: this._commands,
-          }
-        );
-      }
-    } catch (e) {
-      logger.error(e);
-    }
-    logger.info(
-      "[%s] Finished reloading %s application command(s)",
-      LoggerScopes.CommandsManager,
-      (data as []).length
-    );
-    logger.debug(LoggerScopes.CommandsManager + ": Request results", {
-      data: (data as []).length ? data : "none",
-    });
   }
 
   /**
