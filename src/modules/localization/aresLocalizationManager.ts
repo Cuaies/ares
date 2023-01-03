@@ -19,7 +19,7 @@ export class AresLocalizationManager extends BaseManager {
   /**
    * Whether the provider is ready.
    */
-  private _isProviderReady = false;
+  private _providerReady = false;
 
   constructor(client: AresClient) {
     super(client);
@@ -30,7 +30,7 @@ export class AresLocalizationManager extends BaseManager {
    */
   public async init() {
     await i18next.use(I18NexFsBackend).init(await createProviderOptions());
-    if (i18next.isInitialized) this._isProviderReady = true;
+    if (i18next.isInitialized) this._providerReady = true;
     this._provider = i18next;
   }
 
@@ -38,18 +38,18 @@ export class AresLocalizationManager extends BaseManager {
    * The translation provider, `i18next`.
    */
   get provider() {
-    this._isProviderReady || this.isProviderReady();
+    this._providerReady || this._isProviderReady();
     return this._provider;
   }
 
   /**
    * Checks if the provider is ready to use.
    */
-  private isProviderReady() {
-    if (this._isProviderReady) return this._isProviderReady;
+  private _isProviderReady() {
+    if (this._providerReady) return this._providerReady;
     if (this._provider && this._provider.isInitialized) {
-      this._isProviderReady = true;
-      return this._isProviderReady;
+      this._providerReady = true;
+      return this._providerReady;
     }
     throw new AresLocalizationManagerError("Provider is not yet initialized");
   }
