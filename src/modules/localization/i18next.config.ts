@@ -61,6 +61,9 @@ export const createProviderOptions = async (): Promise<
   };
 };
 
+/**
+ * Returns a promise that resolves to an array of available locales.
+ */
 async function getAvailableLocales(pathToLocales: string) {
   const direns = await readdir(pathToLocales, {
     withFileTypes: true,
