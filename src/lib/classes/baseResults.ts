@@ -23,14 +23,32 @@ export abstract class BaseResults<T> {
 
   addCached(entry: T) {
     this._cached.push(entry);
+    return this;
+  }
+
+  setCached(entries: T[]) {
+    this._cached = entries;
+    return this;
   }
 
   addUncached(entry: T) {
     this._uncached.push(entry);
+    return this;
+  }
+
+  setUncached(entries: T[]) {
+    this._uncached = entries;
+    return this;
   }
 
   addDisabled(entry: T) {
     this._disabled.push(entry);
+    return this;
+  }
+
+  setDisabled(entries: T[]) {
+    this._disabled = entries;
+    return this;
   }
 
   abstract displayResults(): void;
