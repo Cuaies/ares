@@ -1,4 +1,4 @@
-import { BaseManager, LocalizationMap } from "discord.js";
+import { LocalizationMap } from "discord.js";
 import { AresClient } from "../../lib/classes/aresClient";
 import i18next from "i18next";
 import I18NexFsBackend from "i18next-fs-backend";
@@ -9,11 +9,16 @@ import { LoggerScopes } from "../logger/loggerScopes";
 import { isAresCommandLocale } from "../../util/helpers/typeUtil";
 import { LocaleNamespaces } from "./localizationNamespaces";
 import { AresCommandTranslation } from "../../ts/types/types";
+import { AresBaseManager } from "../../lib/classes/baseManager";
+import LocalizationManagerResults from "./results";
 
 /**
  * Manager responsible for handling localization.
  */
-export class AresLocalizationManager extends BaseManager {
+export class AresLocalizationManager extends AresBaseManager {
+  readonly scope = LoggerScopes.LocalizationManager;
+  readonly results = new LocalizationManagerResults();
+
   /**
    * The translation provider, `i18next`.
    */
