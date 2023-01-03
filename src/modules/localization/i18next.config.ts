@@ -27,16 +27,6 @@ export const createProviderOptions = async (): Promise<
   const LOAD_PATH = path.join(__dirname, "locales", "{{lng}}", "{{ns}}.json");
 
   /**
-   * Path for writing the missing locales' keys.
-   */
-  const MISSING_PATH = path.join(
-    __dirname,
-    "locales",
-    "{{lng}}",
-    "{{ns}}.missing.js"
-  );
-
-  /**
    * List of languages to use based on `NODE_ENV`'s value.
    */
   const languages = await getAvailableLocales(LOCALES_PATH);
@@ -53,10 +43,8 @@ export const createProviderOptions = async (): Promise<
     supportedLngs: languages,
     lng: lng,
     load: "currentOnly",
-    saveMissing: true,
     backend: {
       loadPath: LOAD_PATH,
-      addPath: MISSING_PATH,
     },
   };
 };
