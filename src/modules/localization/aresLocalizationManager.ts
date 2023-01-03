@@ -10,6 +10,9 @@ import { isAresCommandLocale } from "../../util/helpers/typeUtil";
 import { LocaleNamespaces } from "./localizationNamespaces";
 import { AresCommandTranslation } from "../../ts/types/types";
 
+/**
+ * Manager responsible for handling localization.
+ */
 export class AresLocalizationManager extends BaseManager {
   /**
    * The translation provider, `i18next`.
