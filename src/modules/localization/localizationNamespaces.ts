@@ -1,3 +1,3 @@
-export enum LocaleNamespaces {
+export enum LocalizationNamespaces {
   Commands = "commands",
 }

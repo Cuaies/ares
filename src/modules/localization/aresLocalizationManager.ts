@@ -7,7 +7,7 @@ import AresLocalizationManagerError from "../logger/errors/localizationManagerEr
 import logger from "../logger/logger";
 import { LoggerScopes } from "../logger/loggerScopes";
 import { isAresCommandLocale } from "../../util/helpers/typeUtil";
-import { LocaleNamespaces } from "./localizationNamespaces";
+import { LocalizationNamespaces } from "./localizationNamespaces";
 import { AresCommandTranslation } from "../../ts/types/types";
 import { AresBaseManager } from "../../lib/classes/baseManager";
 import LocalizationManagerResults from "./results";
@@ -84,7 +84,7 @@ export class AresLocalizationManager extends AresBaseManager {
         if (provider.exists(commandName, { lng: locale, ns: "commands" })) {
           const t = provider.t(commandName, {
             lng: locale,
-            ns: LocaleNamespaces.Commands,
+            ns: LocalizationNamespaces.Commands,
             returnObjects: true,
           });
 
