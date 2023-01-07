@@ -2,7 +2,7 @@ import { Client, ClientOptions } from "discord.js";
 import path from "path";
 import { AresCommandManager } from "../../modules/commands/aresCommandManager";
 import { AresEventManager } from "../../modules/events/aresEventManager";
-import { AresLocalizationManager } from "../../modules/localization/aresLocalizationManager";
+import { AresLocalizationManager } from "../../modules/localization/localizationManager";
 import logger from "../../modules/logger/logger";
 import { LoggerScopes } from "../../modules/logger/loggerScopes";
 
