@@ -1,6 +1,6 @@
-import { ErrorCodes } from "../../modules/logger/errorCodes";
-import { ErrorMessages } from "../../modules/logger/errorMessages";
-import { formatMessage } from "../../modules/logger/formatMessage";
+import { ErrorCodes } from "../errorCodes";
+import { ErrorMessages } from "../errorMessages";
+import { formatMessage } from "../formatMessage";
 
 export abstract class AresBaseError<E extends ErrorCodes> extends Error {
   abstract readonly name: string;

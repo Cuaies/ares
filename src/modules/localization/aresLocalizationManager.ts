@@ -3,7 +3,7 @@ import { AresClient } from "../../lib/classes/aresClient";
 import i18next from "i18next";
 import I18NexFsBackend from "i18next-fs-backend";
 import { createProviderOptions, DEFAULT_LOCALE } from "./i18next.config";
-import AresLocalizationManagerError from "../../lib/classes/errors/shardingManagerError";
+import AresLocalizationManagerError from "../logger/errors/localizationManagerError";
 import logger from "../logger/logger";
 import { LoggerScopes } from "../logger/loggerScopes";
 import { isAresCommandLocale } from "../../util/helpers/typeUtil";
@@ -11,6 +11,7 @@ import { LocaleNamespaces } from "./localizationNamespaces";
 import { AresCommandTranslation } from "../../ts/types/types";
 import { AresBaseManager } from "../../lib/classes/baseManager";
 import LocalizationManagerResults from "./results";
+import { ErrorCodes } from "../logger/errorCodes";
 
 /**
  * Manager responsible for handling localization.
@@ -59,7 +60,7 @@ export class AresLocalizationManager extends AresBaseManager {
       this._providerReady = true;
       return this._providerReady;
     }
-    throw new AresLocalizationManagerError("Provider is not yet initialized");
+    throw new AresLocalizationManagerError(ErrorCodes.ProviderUninitialized);
   }
 
   /**
@@ -98,24 +99,25 @@ export class AresLocalizationManager extends AresBaseManager {
             });
           } else {
             logger.warn(
-              `[${LoggerScopes.LocalizationManager}] Invalid command localization argument for command. [command=${commandName}] [locale=${locale}]`
+              `[${this.scope}] Invalid command localization argument for command. [command=${commandName}] [locale=${locale}]`
             );
           }
         } else {
           logger.warn(
-            `[${LoggerScopes.LocalizationManager}] Missing command localization for command. [command=${commandName}] [locale=${locale}]`
+            `[${this.scope}] Missing command localization for command. [command=${commandName}] [locale=${locale}]`
           );
         }
       });
     } else {
       throw new AresLocalizationManagerError(
-        "Provider requires preloaded locales in order to create command localization maps."
+        ErrorCodes.ProviderRequiresPreloaded
       );
     }
 
     if (!default_localization.name) {
       throw new AresLocalizationManagerError(
-        `Missing default command localization for command. [command=${commandName}]`
+        ErrorCodes.MissingCommandDefault,
+        commandName
       );
     }
 
