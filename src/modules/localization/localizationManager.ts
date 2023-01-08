@@ -1,4 +1,4 @@
-import { LocalizationMap } from "discord.js";
+import { Locale, LocalizationMap } from "discord.js";
 import { AresClient } from "../../lib/classes/aresClient";
 import i18next from "i18next";
 import I18NexFsBackend from "i18next-fs-backend";
@@ -41,6 +41,15 @@ export class AresLocalizationManager extends AresBaseManager {
     await i18next.use(I18NexFsBackend).init(await createProviderOptions());
     if (i18next.isInitialized) this._providerReady = true;
     this._provider = i18next;
+
+    this.results.setCached(<Locale[]>Object.keys(this.provider.store.data));
+    await this.results.checkForUncached(
+      (<{ loadPath: string }>this.provider.options.backend).loadPath.replace(
+        /{{(.*)json/,
+        ""
+      )
+    );
+    this.results.displayResults();
   }
 
   /**
