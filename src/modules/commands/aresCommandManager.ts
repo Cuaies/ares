@@ -74,7 +74,8 @@ export class AresCommandManager {
               LoggerScopes.CommandsManager,
               command
             );
-            return results.addUncached(command);
+            results.addUncached(command);
+            return;
           }
 
           if (this._commands.has(command.data.name)) {
@@ -83,7 +84,8 @@ export class AresCommandManager {
               LoggerScopes.CommandsManager,
               command.data.name
             );
-            return results.addUncached(command);
+            results.addUncached(command);
+            return;
           }
 
           // Sets the command's locale data.
