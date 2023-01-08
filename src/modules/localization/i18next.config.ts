@@ -4,6 +4,7 @@ import { FsBackendOptions } from "i18next-fs-backend";
 import { Locale } from "discord.js";
 import { readdir } from "fs/promises";
 import { isLocale } from "../../util/helpers/stringUtil";
+import { LocalizationNamespaces } from "./localizationNamespaces";
 
 /**
  * The default locale to be used.
@@ -38,7 +39,7 @@ export const createProviderOptions = async (): Promise<
 
   return {
     debug: process.env.DEBUG === "true" ? true : false,
-    ns: ["commands"],
+    ns: Object.values(LocalizationNamespaces),
     preload: languages,
     supportedLngs: languages,
     lng: lng,
