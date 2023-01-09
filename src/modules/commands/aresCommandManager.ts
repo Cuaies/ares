@@ -1,10 +1,6 @@
-import { ApplicationCommandType, Collection, REST, Routes } from "discord.js";
+import { ApplicationCommandType, Collection } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
-import {
-  ClientConfig,
-  SupportGuild,
-} from "../../ts/interfaces/config.interface";
 import {
   AresApplicationCommandType,
   CommandCollection,
@@ -13,14 +9,13 @@ import { isAresCommand } from "../../util/helpers/stringUtil";
 import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
 import CommandManagerResults from "./results";
-import config from "config";
 import { AresClient } from "../../lib/classes/aresClient";
 
 export class AresCommandManager {
-  client?: AresClient;
+  client: AresClient;
   private _commands: CommandCollection;
 
-  constructor(client?: AresClient) {
+  constructor(client: AresClient) {
     this.client = client;
     this._commands = new Collection();
   }
@@ -79,7 +74,8 @@ export class AresCommandManager {
               LoggerScopes.CommandsManager,
               command
             );
-            return results.addUncached(command);
+            results.addUncached(command);
+            return;
           }
 
           if (this._commands.has(command.data.name)) {
@@ -88,12 +84,12 @@ export class AresCommandManager {
               LoggerScopes.CommandsManager,
               command.data.name
             );
-            return results.addUncached(command);
+            results.addUncached(command);
+            return;
           }
 
           // Sets the command's locale data.
-          command =
-            this._setCommandLocale(command, file.replace(".js", "")) || command;
+          command = this._setCommandLocales(command, file.replace(".js", ""));
 
           command.data.disabled
             ? results.addDisabled(command)
@@ -107,79 +103,33 @@ export class AresCommandManager {
   }
 
   /**
-   * Sends a PUT request including commands currently contained in the manager.
-   */
-  public async putCommands({
-    token,
-    clientId,
-    guildId,
-  }: ClientConfig & SupportGuild): Promise<void> {
-    const rest = new REST({ version: "10" }).setToken(token);
-    const deployment = config.util.getEnv("NODE_ENV") == "production";
-    if (!this._commands.size) return;
-    logger.info(
-      "[%s] Reloading application command(s)",
-      LoggerScopes.CommandsManager
-    );
-    let data;
-    try {
-      if (deployment) {
-        data = await rest.put(Routes.applicationCommands(clientId), {
-          body: this._commands.filter((cmd) => !cmd.data.disabled).toJSON(),
-        });
-      } else {
-        data = await rest.put(
-          Routes.applicationGuildCommands(clientId, guildId),
-          {
-            body: this._commands,
-          }
-        );
-      }
-    } catch (e) {
-      logger.error(e);
-    }
-    logger.info(
-      "[%s] Finished reloading %s application command(s)",
-      LoggerScopes.CommandsManager,
-      (data as []).length
-    );
-    logger.debug(LoggerScopes.CommandsManager + ": Request results", {
-      data: (data as []).length ? data : "none",
-    });
-  }
-
-  /**
    * Gathers locale data for the specific command file name and sets it to the command.
    */
-  private _setCommandLocale(
+  private _setCommandLocales(
     command: AresApplicationCommandType,
     commandFileName: string
-  ): AresApplicationCommandType | undefined {
-    if (!this.client?.localizationManager) return undefined;
-
-    const defaultLocales =
-      this.client.localizationManager.getCommandDefaultLocale(
-        commandFileName,
-        command.data.type
-      );
-
-    const maps =
+  ): AresApplicationCommandType {
+    const {
+      default_localization,
+      name_localizations,
+      description_localizations,
+    } =
       this.client.localizationManager.createCommandLocalizationMaps(
         commandFileName
       );
 
     // Sets the default locale and localizations.
     command.data
-      .setName(defaultLocales.name)
-      .setDescriptionLocalizations(maps.description_localizations)
-      .setNameLocalizations(maps.name_localizations);
+      .setName(default_localization.name)
+      .setDescriptionLocalizations(description_localizations)
+      .setNameLocalizations(name_localizations);
 
     // Sets the description if it's a chat input command.
     if (
-      defaultLocales.description &&
+      default_localization.description &&
       command.data.type === ApplicationCommandType.ChatInput
     ) {
-      command.data.setDescription(defaultLocales.description);
+      command.data.setDescription(default_localization.description);
     }
 
     return command;

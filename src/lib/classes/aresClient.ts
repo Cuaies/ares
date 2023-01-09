@@ -2,7 +2,7 @@ import { Client, ClientOptions } from "discord.js";
 import path from "path";
 import { AresCommandManager } from "../../modules/commands/aresCommandManager";
 import { AresEventManager } from "../../modules/events/aresEventManager";
-import { AresLocalizationManager } from "../../modules/localization/aresLocalizationManager";
+import { AresLocalizationManager } from "../../modules/localization/localizationManager";
 import logger from "../../modules/logger/logger";
 import { LoggerScopes } from "../../modules/logger/loggerScopes";
 
@@ -13,12 +13,6 @@ const COMMANDS_PATH = path.join(
   __dirname,
   "../../",
   "modules/commands/commands"
-);
-/** Path to the commands' directory. */
-const LOCALES_PATH = path.join(
-  __dirname,
-  "../../",
-  "modules/localization/locales"
 );
 
 export class AresClient extends Client {
@@ -34,12 +28,8 @@ export class AresClient extends Client {
     this.commandManager = new AresCommandManager(this);
   }
 
-  async loadManagers(
-    localesPath = LOCALES_PATH,
-    commandsPath = COMMANDS_PATH,
-    eventsPath = EVENTS_PATH
-  ) {
-    await this.localizationManager.load(localesPath);
+  async loadManagers(commandsPath = COMMANDS_PATH, eventsPath = EVENTS_PATH) {
+    await this.localizationManager.init();
     await this.commandManager.load(commandsPath);
     this.eventManager.loadAll(eventsPath);
   }

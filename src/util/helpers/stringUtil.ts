@@ -1,4 +1,4 @@
-import { Events } from "discord.js";
+import { Events, Locale } from "discord.js";
 import { AresChatInputCommand } from "../../modules/commands/aresChatInputCommand";
 import { AresMessageCommand } from "../../modules/commands/aresMessageCommand";
 import { AresUserCommand } from "../../modules/commands/aresUserCommand";
@@ -16,4 +16,13 @@ export const isAresCommand = (
   if (command instanceof AresMessageCommand) return true;
   if (command instanceof AresUserCommand) return true;
   return false;
+};
+
+/**
+ * Checks if the given string is a valid `Locale`.
+ */
+export const isLocale = (locale: unknown): locale is Locale => {
+  if (!locale || locale.constructor === Array || typeof locale != "string")
+    return false;
+  return Object.values(Locale).includes(locale as Locale);
 };

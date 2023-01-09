@@ -1,0 +1,32 @@
+name: Crowdin import
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */12 * * *"
+  push:
+    paths:
+      - "src/modules/localization/locales/en-US/*.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  crowdin-import:
+    name: upload source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Push to Crowdin
+        uses: crowdin/github-action@1.5.2
+        with:
+          upload_sources: true
+          upload_translations: true
+          download_translations: false
+          crowdin_branch_name: ${{ env.BRANCH_NAME }}
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
