@@ -1,6 +1,10 @@
 name: Build
 
-on: push
+on:
+  push:
+    paths:
+      - src/**/*
+      - !src/modules/localization/locales
 
 jobs:
   build:
