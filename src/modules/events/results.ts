@@ -1,7 +1,7 @@
 import { LoggerScopes } from "../logger/loggerScopes";
 import { BaseResults } from "../../lib/classes/baseResults";
 import logger from "../logger/logger";
-import AresEventHandler from "./aresEventHandler";
+import AresEventHandler from "./eventHandler";
 
 export default class EventManagerResults extends BaseResults<AresEventHandler> {
   constructor() {
