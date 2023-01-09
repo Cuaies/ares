@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import AresEventHandler from "../aresEventHandler";
+import AresEventHandler from "../eventHandler";
 import logger from "../../logger/logger";
 import { LoggerScopes } from "../../logger/loggerScopes";
 
