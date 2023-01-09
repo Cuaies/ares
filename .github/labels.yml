@@ -10,3 +10,5 @@
   color: "B5DAC2"
 - name: wontfix
   color: "ffffff"
+- name: l10n
+  color: "333333"
