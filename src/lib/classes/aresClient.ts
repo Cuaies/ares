@@ -1,13 +1,11 @@
 import { Client, ClientOptions } from "discord.js";
 import path from "path";
 import { AresCommandManager } from "../../modules/commands/aresCommandManager";
-import { AresEventManager } from "../../modules/events/aresEventManager";
+import { AresEventManager } from "../../modules/events/eventManager";
 import { AresLocalizationManager } from "../../modules/localization/localizationManager";
 import logger from "../../modules/logger/logger";
 import { LoggerScopes } from "../../modules/logger/loggerScopes";
 
-/** Path to the event handlers' directory. */
-const EVENTS_PATH = path.join(__dirname, "../../", "modules/events/handlers");
 /** Path to the commands' directory. */
 const COMMANDS_PATH = path.join(
   __dirname,
@@ -28,14 +26,14 @@ export class AresClient extends Client {
     this.commandManager = new AresCommandManager(this);
   }
 
-  async loadManagers(commandsPath = COMMANDS_PATH, eventsPath = EVENTS_PATH) {
+  async initManagers(commandsPath = COMMANDS_PATH) {
     await this.localizationManager.init();
     await this.commandManager.load(commandsPath);
-    this.eventManager.loadAll(eventsPath);
+    await this.eventManager.init();
   }
 
   async init(token: string) {
-    await this.loadManagers();
+    await this.initManagers();
 
     logger.verbose(
       "[%s:%s] Client attempting to login",

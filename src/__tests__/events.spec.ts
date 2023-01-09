@@ -1,11 +1,12 @@
-import { AresEventManager } from "../modules/events/aresEventManager";
+import { AresClient } from "../lib/classes/aresClient";
+import { AresEventManager } from "../modules/events/eventManager";
 
 jest.mock("fs/promises");
 jest.mock("../client");
 
 let manager: AresEventManager;
 beforeAll(() => {
-  manager = new AresEventManager();
+  manager = new AresEventManager(new AresClient({ intents: [], partials: [] }));
 });
 
 describe("Event Manager", () => {
@@ -22,7 +23,7 @@ describe("Event Manager", () => {
     test("it should call the caching and registering methods", async () => {
       const loadSpy = jest.spyOn(manager, "loadEventHandlers");
       const registerSpy = jest.spyOn(manager, "registerEventHandlers");
-      await manager.loadAll(__dirname);
+      await manager.init();
       expect(loadSpy).toHaveBeenCalled();
       expect(registerSpy).toHaveBeenCalled();
     });

@@ -6,18 +6,40 @@ import { EventCollection } from "../../ts/types/types";
 import { isEventType } from "../../util/helpers/stringUtil";
 import { LoggerScopes } from "../logger/loggerScopes";
 import logger from "../logger/logger";
-import AresEventHandler from "./aresEventHandler";
+import AresEventHandler from "./eventHandler";
 import EventManagerResults from "./results";
+import { AresBaseManager } from "../../lib/classes/baseManager";
 
-export class AresEventManager {
-  client?: AresClient;
-  private _eventHandlers: EventCollection;
+/**
+ * Path to the event handlers directory.
+ */
+const HANDLERS_PATH = path.join(__dirname, "handlers");
 
-  constructor(client?: AresClient) {
-    this.client = client;
-    this._eventHandlers = new Collection();
+export class AresEventManager extends AresBaseManager {
+  readonly scope = LoggerScopes.EventsHandler;
+  readonly results = new EventManagerResults();
+
+  /**
+   * Collection of cached event handlers.
+   */
+  private _eventHandlers: EventCollection = new Collection();
+
+  constructor(client: AresClient) {
+    super(client);
   }
 
+  /**
+   * Initializes the manager.
+   */
+  public async init() {
+    await this.loadEventHandlers(HANDLERS_PATH);
+    this.results.displayResults();
+    await this.registerEventHandlers();
+  }
+
+  /**
+   * Get the collection of cached event handlers.
+   */
   get handlers() {
     return this._eventHandlers;
   }
@@ -26,12 +48,12 @@ export class AresEventManager {
    * Cache handler modules from local directory.
    */
   public async loadEventHandlers(directory: string): Promise<void> {
-    logger.verbose("[%s] Loading events", LoggerScopes.EventsHandler);
-
     const handlerFiles = await readdir(directory, { withFileTypes: false });
-    const results = new EventManagerResults();
 
-    if (!handlerFiles || !handlerFiles.length) return results.displayResults();
+    if (!handlerFiles || !handlerFiles.length) {
+      this.results.displayResults();
+      return;
+    }
 
     await handlerFiles.reduce(async (p, file) => {
       await p;
@@ -44,7 +66,7 @@ export class AresEventManager {
 
       if (isEventType(handler.name)) {
         if (this._eventHandlers.has(handler.name)) {
-          results.addUncached(handler);
+          this.results.addUncached(handler);
           logger.warn(
             "[%s] Duplicated event handler found: %s",
             LoggerScopes.EventsHandler,
@@ -54,8 +76,8 @@ export class AresEventManager {
         }
 
         handler.disabled
-          ? results.addDisabled(handler)
-          : results.addCached(handler);
+          ? this.results.addDisabled(handler)
+          : this.results.addCached(handler);
         this._eventHandlers.set(handler.name, handler);
       } else {
         logger.warn(
@@ -63,11 +85,9 @@ export class AresEventManager {
           LoggerScopes.EventsHandler,
           handler.name
         );
-        results.addUncached(handler);
+        this.results.addUncached(handler);
       }
     }, Promise.resolve());
-
-    results.displayResults();
   }
 
   /**
@@ -96,14 +116,5 @@ export class AresEventManager {
         logger.error(e);
       }
     });
-  }
-
-  /**
-   * Loads & registers every valid handler from the provided directory.
-   * @param directory Path to the handlers' directory.
-   */
-  public async loadAll(directory: string): Promise<void> {
-    await this.loadEventHandlers(directory);
-    this.registerEventHandlers();
   }
 }
